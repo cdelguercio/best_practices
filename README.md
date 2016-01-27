@@ -167,6 +167,13 @@ git push origin 0.1 // push specific tag
 git push origin --tags // push all tags
 ```
 
+##### Install local packages with pip
+```
+pip install -e .
+
+python setup.py develop --uninstall
+```
+
 ### Register with PyPi
 ```
 python setup.py register -r pypitest
