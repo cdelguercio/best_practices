@@ -159,6 +159,23 @@ git rebase -i --root master
 git push --force
 ```
 
+##### Tagging
+```
+git tag 0.1 // create tag
+git tag -d 0.1 // locally delete tag
+git push origin 0.1 // push specific tag
+git push origin --tags // push all tags
+```
+
+### Register with PyPi
+```
+python setup.py register -r pypitest
+python setup.py sdist upload -r pypitest
+
+python setup.py register -r pypi
+python setup.py sdist upload -r pypi
+```
+
 ### Bug tracking
 
 # DevOps
