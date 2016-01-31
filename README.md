@@ -15,11 +15,24 @@ apt-get install python-dev libpq-dev
 ### sass, susy, compass
 
 ```
-apt-get install ruby
+apt-get install ruby ruby-dev
 gem install sass
 gem install susy
-apt-get install ruby-dev
 gem install compass
+gem install compass-import-once
+```
+
+Better yet: Create a Gemfile:
+```
+gem 'sass'
+gem 'susy'
+gem 'compass'
+gem 'compass-import-once', :require => 'compass/import-once/activate'
+```
+
+Then execute:
+```
+bundle
 ```
 
 ### Node
@@ -28,16 +41,171 @@ curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
 apt-get install nodejs
 ```
 
-### Grunt
-
+probably a good idea to create a package.json
 ```
-cd app_folder/static
+{
+  "name": "app_name",
+  "version": "0.2.0",
+  "description": "Your description here",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Del Guercio",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "bower-files": "^3.9.1"
+  }
+}
+```
+
+then do:
+```
+cd app_name/static
 npm install
 ```
-To watch for changes in SASS/Coffee/JS files, simply run `grunt`. If preparing the app for production, run `grunt compress` which will run ngAnnotate & uglify.
+
+### Installing Grunt (if NOT using package.json)
+```
+cd app_name/static
+npm install grunt
+```
+
+### Using Grunt
+
+Create a Gruntfile.js
+```
+lib = require('bower-files')({
+  overrides: {
+    modernizr: {
+      main: 'modernizr.js',
+      dependencies: {}
+    }
+  }
+});
+
+module.exports = function(grunt) {
+
+  grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    coffee: {
+      compileJoined: {
+        options : {
+          join: true,
+          sourceMap: true
+        },
+        files: {
+          'build/pages-coffee.js': ['**/coffee/*.coffee']  // concat then compile into single file
+        }
+      }
+    },
+    sass: {
+      dist: {
+        options: {
+          compass: true,
+          require: 'susy'
+        },
+        files: [{
+          expand: true,
+          cwd: 'sass',
+          src: ['**/*.scss'],
+          dest: './css',
+          ext: '.css'
+        }]
+      }
+    },
+    watch: {
+      reload: {
+        files: ['**/*.css', '**/js/**/*.js'],
+        options: {
+          livereload: true
+        }
+      },
+      css: {
+        files: '**/*.scss',
+        tasks: ['sass']
+      },
+      coffee: {
+        files: '**/coffee/*.coffee' ,
+        tasks: ['coffee']
+      },
+      pages: {
+        files: ['**/js/**/*.js'],
+        tasks: ['concat']
+      }
+    },
+    concat: {
+      pages: {
+        src: ['**/js/**/*.js'],
+        dest: 'build/pages.js'
+      }
+    },
+    uglify: {
+      options: {
+        sourceMap: true,
+        banner: '/*! <%= pkg.name %> */\n'
+      },
+      bower_components: {
+        files: {
+          'build/lib.min.js': lib.ext('js').files
+        }
+      },
+      pages: {
+        files: {
+          'build/pages.min.js': 'build/pages.js'
+        }
+      }
+    }
+  });
+
+  grunt.loadNpmTasks('grunt-contrib-coffee');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+
+  //grunt.registerTask('concat-dashboard', ['concat:dashboard_js', 'uglify:dashboard_js']);
+  grunt.registerTask('build', ['sass', 'concat', 'uglify']);
+  grunt.registerTask('default', ['sass', 'watch'])
+};
+
+```
+
+To watch for changes in SASS/Coffee/JS files, simply run `grunt`. If preparing the app for production, run `grunt compress` which will run uglify.
+
+### Installing bower  (if NOT using package.json)
+```
+cd app_name/static
+npm install bower
+```
+
+### Configuring bower
+```
+{
+  "name": "GhostAudio",
+  "version": "0.1.0",
+  "homepage": "http://ghostaudio.com",
+  "authors": [
+    "Chris Del Guercio <cdelguercio@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.5"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.4"
+  }
+}
+```
 
 ### Docker
-
 ```
 wget -qO- https://get.docker.com/ | sh
 systemctl enable docker
@@ -46,7 +214,6 @@ docker-compose up
 ```
 
 To rebuild the docker image after changing the system requirements
-
 ```
 docker-compose build
 ```
