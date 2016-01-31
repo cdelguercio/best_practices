@@ -35,6 +35,11 @@ Then execute:
 bundle
 ```
 
+Write a config.rb file for compass-import-once to work with grunt-contrib-sass:
+```
+require 'compass/import-once/activate'
+```
+
 ### Node
 ```
 curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
