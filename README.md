@@ -339,7 +339,7 @@ git push origin 0.1 // push specific tag
 git push origin --tags // push all tags
 ```
 
-##### Install local packages with pip
+### Install local packages with pip
 ```
 pip install -e .
 
@@ -347,6 +347,11 @@ python setup.py develop --uninstall
 ```
 
 ### Register with PyPi
+
+1) Edit setup.py in increase version number
+2) Create the tag on github
+3) Upload to PyPi
+
 ```
 python setup.py register -r pypitest
 python setup.py sdist upload -r pypitest
