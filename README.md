@@ -348,9 +348,9 @@ python setup.py develop --uninstall
 
 ### Register with PyPi
 
-1) Edit setup.py in increase version number
-2) Create the tag on github
-3) Upload to PyPi
+* 1) Edit setup.py in increase version number
+* 2) Create the tag on github
+* 3) Upload to PyPi
 
 ```
 python setup.py register -r pypitest
